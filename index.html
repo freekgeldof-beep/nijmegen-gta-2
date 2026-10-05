@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101417">
+<title>City Run · GTA 2</title>
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/src/hud.css">
+</head>
+<body>
+<div id="loading" role="status">Kaart laden…</div>
+<div id="gameCanvasHolder" aria-label="Spelwereld"></div>
+<div id="overlay">
+  <div id="onlineLabels" aria-hidden="true"></div>
+  <div class="brand"><img src="/logo.svg" alt="City Run" width="42" height="42"><div><strong data-city-name>City Run</strong><span>CITY RUN / <span data-city-code>NL</span></span></div></div>
+  <button id="menuButton" type="button">Pauze / hulp <kbd>ESC</kbd></button>
+  <button id="mapButton" type="button">Stadskaart [G]</button>
+  <button id="onlineButton" type="button">Online jacht</button>
+  <section id="casePanel" class="panel" hidden aria-label="Online kofferjacht">
+    <div class="row"><span class="eyebrow accent"><span data-city-code>NL</span> / KOFFERJACHT</span><strong id="caseClock">0:00</strong></div>
+    <h2 id="caseTitle">Zoek de koffer</h2>
+    <p id="caseDetail"></p><div id="caseDistance"></div>
+  </section>
+  <section id="mission" class="panel" aria-label="Koeriersopdracht">
+    <div class="row"><span class="eyebrow accent">Dispatch / <span data-city-code>NL</span></span><span class="eyebrow">01</span></div>
+    <h1 id="missionTitle">De stad wacht.</h1>
+    <p id="missionDetail">Pak een koeriersrit en ontdek de stad op jouw tempo.</p>
+    <div class="row mission-meta"><strong id="missionTime">KOERIER</strong><span id="missionReward" class="accent">0 bezorgd</span></div>
+    <button id="missionButton" class="action" style="margin-top:12px" type="button">Start rit [M]</button>
+    <button id="raceButton" class="action secondary" style="margin-top:8px" type="button">Checkpoint-race [L]</button>
+  </section>
+  <section id="racePanel" class="panel" hidden aria-label="Checkpoint-race">
+    <div class="row"><span class="eyebrow accent"><span data-city-code>NL</span> / TIJDRIT</span><span id="raceProgress" class="eyebrow">1 / 5</span></div>
+    <div id="raceClock">0:45</div><div id="raceMessage">Bereik het volgende checkpoint</div>
+  </section>
+  <section id="police" class="panel" data-state="clear" aria-label="Politiestatus">
+    <div class="row"><span class="eyebrow">Politiescanner</span><span class="eyebrow accent"><span data-city-code>NL</span></span></div>
+    <div id="wanted">VRIJE DOORGANG</div><div id="wantedSub">Geen politie op je spoor</div>
+    <div class="meter" aria-label="Ontsnappingsvoortgang"><span id="escapeMeter"></span></div>
+    <div class="row"><span class="eyebrow">Arrestatierisico</span><span id="arrestCount" class="eyebrow">0 / 3</span></div>
+    <div class="meter"><span id="arrestMeter"></span></div><div id="immune" hidden></div>
+  </section>
+  <section id="navigation" class="panel" aria-label="Navigatie">
+    <div id="radarSlot"><span id="radarNorth">N</span></div>
+    <div class="row location"><strong id="streetname"><span data-city-name>Stad</span></strong><span id="clock">06:43</span></div>
+    <div id="targetDistance">VRIJ RIJDEN</div>
+  </section>
+  <section id="vehicle" class="panel" aria-label="Voertuig en uitrusting">
+    <div class="row"><span id="vehicleName" class="eyebrow">Stadsauto</span><span id="earnings">€ 0</span></div>
+    <div id="speedRow"><span id="speed">0</span><span id="speedUnit">KM/H</span></div>
+    <div class="damage-label"><span>AUTOSCHADE</span><strong id="damageValue">100%</strong></div>
+    <div class="damage-track"><span id="damageFill"></span></div>
+    <div id="shirtShield" hidden><span data-club-label>CLUBSHIRT</span> · <span id="shirtShieldTime">40</span>s ONSCHENDBAAR</div>
+    <div id="footLabel" hidden>Op straat.</div>
+    <div class="ammo-row"><div><label>Kogels</label><kbd>W</kbd><strong id="ammo">12</strong></div><div><label>Mijnen</label><kbd>Q</kbd><strong id="mines">5</strong></div></div>
+    <div id="onlineHud" hidden><div class="ammo-row"><div><label>Heatseeker</label><kbd>E</kbd><strong id="rocketCount">0</strong></div></div><div id="lockState"></div><div id="cloakTime"></div><div id="onlineScore"></div></div>
+  </section>
+  <div id="contextHint">[SPATIE] Uitstappen</div>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <div id="wasted" hidden>WASTED<span class="outcome-sub">Voertuig verloren · Je start zo opnieuw</span></div>
+  <div id="busted" hidden>BUSTED<span class="outcome-sub">Gearresteerd · Je wordt naar het bureau gebracht</span></div>
+</div>
+<div id="pause" role="dialog" aria-modal="true" aria-labelledby="pauseTitle" hidden>
+  <div class="panel">
+    <span class="eyebrow accent"><span data-city-name>Stad</span> / City Run</span><h2 id="pauseTitle">Even van het gas.</h2>
+    <p>De stad staat stil. Hervat wanneer je er klaar voor bent.</p>
+    <dl><dt>Rijden / lopen</dt><dd>↑ ↓ ← →</dd><dt>In- / uitstappen</dt><dd>Spatie</dd><dt>Schieten / mijn</dt><dd>W / Q</dd><dt>Claxon / sirene</dt><dd>A (vasthouden) / S</dd><dt>Koeriersrit</dt><dd>M</dd><dt>Checkpoint-race</dt><dd>L</dd><dt>Dag / avond</dt><dd>N</dd><dt>Uit- / inzoomen</dt><dd>O / P</dd><dt>Stadskaart en landmarks</dt><dd>G</dd><dt>Pauze / hervatten</dt><dd>Esc</dd></dl>
+    <fieldset class="audio-settings"><legend>Geluid</legend>
+      <label class="audio-toggle"><input id="musicEnabled" type="checkbox"> Muziek</label>
+      <label class="audio-slider" for="musicVolume">Muziekvolume <input id="musicVolume" type="range" min="0" max="100" value="42"></label>
+      <div class="track-row"><span id="trackName">Keeps the Flame</span><button id="nextTrack" type="button">Volgend nummer</button></div>
+      <label class="audio-toggle"><input id="effectsEnabled" type="checkbox"> Geluidseffecten</label>
+      <label class="audio-slider" for="effectsVolume">Effectvolume <input id="effectsVolume" type="range" min="0" max="100" value="65"></label>
+      <div id="sirenStatus">Sirene uit [S]</div>
+    </fieldset>
+    <label class="setting"><input id="steadyCamera" type="checkbox"> Rustige camera (zonder vooruitblik)</label>
+    <p>Bezorg in een voertuig, stop in de gouden cirkel en zorg dat je niet gezocht wordt. Verdiensten gelden voor deze speelsessie.</p>
+    <div class="buttons"><button id="resumeButton" class="action" type="button">Verder rijden</button><button id="resetButton" class="action secondary" type="button">Terug naar start</button></div>
+    <p>Terug naar start breekt de actieve rit af. Je verdiensten blijven behouden. Bediening met toetsenbord.</p>
+  </div>
+</div>
+<div id="onlinePanel" hidden role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
+  <div class="panel"><button id="onlineClose" class="close" type="button" aria-label="Sluiten">×</button>
+    <span class="eyebrow accent"><span data-city-code>NL</span> / ONLINE</span><h2 id="onlineTitle">Jacht op elkaar</h2>
+    <p id="onlineStatus">Verbinding maken…</p>
+    <div id="accountArea"><form id="accountForm">
+      <label>Spelersnaam<input name="username" autocomplete="username" minlength="3" maxlength="20" required></label>
+      <label>Wachtwoord<input name="password" type="password" autocomplete="current-password" minlength="10" required></label>
+      <div class="form-row"><label>Avatar<select name="avatar"><option value="driver">🚘 Bestuurder</option><option value="racer">🏁 Racer</option><option value="fox">🦊 Vos</option><option value="robot">🤖 Robot</option></select></label>
+      <label>Landcode<input name="country" value="NL" maxlength="2" pattern="[A-Z]{2}" aria-label="Landcode van twee letters"></label></div>
+      <label class="check"><input id="registerMode" type="checkbox"> Nieuw account aanmaken</label>
+      <button class="action" type="submit">Doorgaan</button>
+    </form></div>
+    <div id="profileArea" hidden><h3 id="profileName"></h3><p id="profileStats"></p><button id="joinButton" class="action" type="button">Arena betreden</button> <button id="logoutButton" class="action secondary" type="button">Uitloggen</button></div>
+    <p class="rules">Pak de koffer en bezorg hem bij de gemarkeerde plek. Andere spelers kunnen je onderscheppen; verlies je auto, dan valt de koffer op straat. Bestuur met pijltjes · W kogel (25%) · Q mijn (100%) · E vasthouden om te locken, loslaten om te vuren (75%) · R wisselt doel · 1–4 kiest auto als je stilstaat. Raketten en 30 sec onzichtbaarheid zitten alleen in willekeurige kistjes.</p>
+  </div>
+</div>
+<section id="setup" hidden><span class="eyebrow accent">CITY RUN / BASIS</span><h1>Elke stad.<br>Jouw speelveld.</h1><p>Deze basis staat klaar voor een Nederlandse stad. Gebruik de prompt uit <strong>GENERATE-CITY.md</strong> om een eigen spelrepo met echte OpenStreetMap-data te maken.</p><p>Stel stad, speelgrens, startplek en landmarks in. Dezelfde engine regelt rijden, politie, koeriersritten, races en online jacht.</p></section>
+<dialog id="cityMap"><header><div><span class="eyebrow accent">STADSKAART / <span data-city-code>NL</span></span><h2 data-city-name>Stad</h2></div><button id="closeMap" type="button">Sluiten [G / Esc]</button></header><div class="map-layout"><div id="mapCanvas"></div><aside><label for="landmarkSearch">Landmarks zoeken</label><input id="landmarkSearch" type="search" placeholder="Naam of categorie…"><p id="landmarkCount"></p><ul id="landmarkList"></ul></aside></div><footer>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · ODbL · <span id="mapBoundaryDescription"></span></footer></dialog>
+<div id="attribution">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
