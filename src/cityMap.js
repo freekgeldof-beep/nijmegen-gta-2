@@ -14,7 +14,7 @@ export function createCityMap(world, sim, pause) {
   for(const g of world.greens)draw('polygon',{points:coords(g.pts),fill:'#335b3b'});
   for(const b of world.buildings)draw('polygon',{points:coords(b.pts),fill:b.isLandmark?'#ae8b52':'#52706b'});
   for(const r of world.roads)draw('polyline',{points:coords(r.pts),fill:'none',stroke:'#a5b9ad','stroke-width':world.roadWidth(r)/2});
-  for(const r of world.railLines)draw('polyline',{points:coords(r.pts),fill:'none',stroke:'#122029','stroke-width':5,'stroke-dasharray':'10 7'});
+  for(const r of world.railLines)draw('polyline',{points:coords(r),fill:'none',stroke:'#122029','stroke-width':5,'stroke-dasharray':'10 7'});
   const labels = world.landmarks.map((lm,i)=>{
     const dot=draw('circle',{cx:lm.cx,cy:lm.cy,r:5,class:'map-dot'});
     const text=draw('text',{x:lm.cx+8,y:lm.cy-8,class:'map-label'});text.textContent=lm.name;
