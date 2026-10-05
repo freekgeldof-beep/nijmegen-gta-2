@@ -266,12 +266,8 @@ export function createGameState(world) {
   }
   for (let i = 0; i < PICKUP_POOL; i++) { const p = { type: rng() < 0.5 ? 'ammo' : 'mine', alive: true, x: 0, y: 0 }; placePickupNearPlayer(p); pickups.push(p); }
 
-  // Bier-crates: alleen op het nachtleven-plein (Stratumseind) en Dommelstraat,
-  // geven tijdelijke onaantastbaarheid voor de politie -- vaste plek, geen
-  // willekeurige respawn bij de speler in de buurt. Straten bestaan vaak uit
-  // meerdere OSM-segmenten met dezelfde naam, dus pak per straat een paar van
-  // de langste stukken in plaats van elk segment te gebruiken.
-  const BEER_STREETS = ['Stratumseind', 'Dommelstraat'];
+  // Vaste bierkratten op de uitgaansstraten uit de stadsconfiguratie.
+  const BEER_STREETS = world.city.pickups?.beerStreets || [];
   for (const streetName of BEER_STREETS) {
     const segs = roads.filter(r => r.name === streetName && r.pts.length > 1).sort((a, b) => b.len - a.len).slice(0, 2);
     for (const r of segs) {

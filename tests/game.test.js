@@ -7,7 +7,7 @@ import { createStepper } from '../src/timing.js';
 import { nearestRoadPoint, roadDistances, distanceToTarget } from '../src/navigation.js';
 
 const read = name => JSON.parse(fs.readFileSync(new URL(`../test/fixtures/eindhoven/${name}.json`, import.meta.url)));
-const world = buildWorld({ osm: read('osm-data'), green: read('green-data'), extra: read('extra-data'), landmarks: read('landmarks'), rails: read('rails') });
+const world = buildWorld({ osm: read('osm-data'), green: read('green-data'), extra: read('extra-data'), landmarks: read('landmarks'), rails: read('rails'), city: { pickups: { beerStreets: ['Stratumseind', 'Dommelstraat'] } } });
 
 test('water centre-lines stay narrow instead of filling across the city', () => {
   assert.ok(world.waterLines.length >= 4);

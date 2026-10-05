@@ -691,5 +691,11 @@
     }
   ],
   "mapRevision": "2026-10-05T08:39:44.230Z",
-  "waterCollision": true
+  "waterCollision": true,
+  "pickups": {
+    "beerStreets": [
+      "Molenstraat",
+      "Tweede Walstraat"
+    ]
+  }
 }

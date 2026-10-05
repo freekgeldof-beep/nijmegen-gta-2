@@ -20,3 +20,5 @@ Kopieer deze prompt in Codex of Claude en vervang de blokhaken:
 4. npm run dev voor solo; npm start na build voor solo en de online arena.
 
 De prompt is een opdracht aan een code-agent: hij vertaalt de beschreven grens naar gecontroleerde coördinaten. Het spel heeft geen ingebouwde AI of betaalde geocoding-API nodig.
+
+Configureer `pickups.beerStreets` met echte uitgaansstraten van de stad voor vaste bierkratten.
